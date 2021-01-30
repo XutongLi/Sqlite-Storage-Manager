@@ -1,4 +1,14 @@
-# 15-445 Database Systems
+# SQLite Storage Manager
+
+## Description
+
+This project is a new disck-oriented storage manager for the [SQLite](<https://www.sqlite.org/index.html>) DBMS. Such a storage manager assumes that the primary storage location of the database is on disk. We can use this storage manager in SQLite based on SQLite's [Virtual Table](<https://www.sqlite.org/vtab.html>) interface, without changing application-level code. 
+
+## Function
+
+- **Extendable Hash Table** : The hash table uses unordered buckets to store unique key/value pairs. It supports the ability to insert/delete key/value entries without specifying the max size of the table. It can automatically grow in size as needed. Use Google CityHash as hash function.
+- **Buffer Pool Manager** : The buffer pool manager is responsible for moving physical pages back and forth from main memory to disk. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system.
+
 # SQLite Project Source Code
 
 ### Build

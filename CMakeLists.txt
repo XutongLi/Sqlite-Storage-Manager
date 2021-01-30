@@ -45,6 +45,7 @@ set(SQLITE_VTABLE_TEST_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/test/include)
 set(SQLITE_VTABLE_THIRD_PARTY_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/third_party)
 include_directories(${SQLITE_VTABLE_SRC_INCLUDE_DIR} ${SQLITE_VTABLE_TEST_INCLUDE_DIR} ${SQLITE_VTABLE_THIRD_PARTY_INCLUDE_DIR})
 include_directories(BEFORE src) # This is needed for gtest.
+link_directories(${PROJECT_SOURCE_DIR}/lib/libcityhash.la)
 
 # ---[ Subdirectories
 add_subdirectory(src)

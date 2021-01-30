@@ -17,7 +17,9 @@ ExtendibleHash<K, V>::ExtendibleHash(size_t size) {}
  */
 template <typename K, typename V>
 size_t ExtendibleHash<K, V>::HashKey(const K &key) {
-  return 0;
+    std::unique_ptr<char[]> buf(new char[sizeof(key)]);
+    memcpy(buf.get(), &key, sizeof(key));
+    return CityHash64(buf.get(), sizeof(key));
 }
 
 /*

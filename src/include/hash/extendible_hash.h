@@ -14,6 +14,7 @@
 #include <string>
 
 #include "hash/hash_table.h"
+#include "hash/city.h"
 
 namespace cmudb {
 

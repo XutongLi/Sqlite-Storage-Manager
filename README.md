@@ -9,7 +9,29 @@ This project is a new disck-oriented storage manager for the [SQLite](<https://w
 - **Extendable Hash Table** : The hash table uses unordered buckets to store unique key/value pairs. It supports the ability to insert/delete key/value entries without specifying the max size of the table. It can automatically grow in size as needed. Use Google CityHash as hash function.
 - **Buffer Pool Manager** : The buffer pool manager is responsible for moving physical pages back and forth from main memory to disk. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system.
 
-# SQLite Project Source Code
+## Use Google CityHash
+
+```
+git clone git@github.com:google/cityhash.git
+cd cityhash
+./configure
+make all CXXFLAGS=-fPIC
+sudo make install
+```
+
+Add `link_libraries(/usr/local/lib/libcityhash.a)` to CMakeLists.txt.
+
+**check the libcityhash.a is position-independent** : 
+
+```
+sudo cd /usr/local/lib
+sudo ar -x libcityhash.a
+readelf --relocs city.o | egrep '(GOT|PLT|JU?MP_SLOT)'
+```
+
+If there is any output, the libcityhash.a is position-independent.
+
+## SQLite Project Source Code
 
 ### Build
 ```

@@ -7,7 +7,7 @@ This project is a new disck-oriented storage manager for the [SQLite](<https://w
 ## Function
 
 - **Extendable Hash Table** : The hash table uses unordered buckets to store unique key/value pairs. It supports the ability to insert/delete key/value entries without specifying the max size of the table. It can automatically grow in size as needed. Use Google CityHash as hash function.
-- **Buffer Pool Manager** : The buffer pool manager is responsible for moving physical pages back and forth from main memory to disk. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system. The manager uses LRU page replacement policy.
+- **Buffer Pool Manager** : The buffer pool manager interface allows a client to new/delete pages on disk, to read a disk page into the buffer pool and pin it, also to unpin a page in the buffer pool. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system. The manager uses LRU page replacement policy.
 
 ## Use Google CityHash
 

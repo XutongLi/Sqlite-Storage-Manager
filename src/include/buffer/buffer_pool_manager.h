@@ -15,6 +15,9 @@
 #include "hash/extendible_hash.h"
 #include "logging/log_manager.h"
 #include "page/page.h"
+#include "common/logger.h"
+
+//#define DBG
 
 namespace cmudb {
 class BufferPoolManager {
@@ -34,6 +37,8 @@ public:
 
   bool DeletePage(page_id_t page_id);
 
+  void FlushAllPages();
+
 private:
   size_t pool_size_; // number of pages in buffer pool
   Page *pages_;      // array of pages
@@ -43,5 +48,7 @@ private:
   Replacer<Page *> *replacer_;   // to find an unpinned page for replacement
   std::list<Page *> *free_list_; // to find a free page for replacement
   std::mutex latch_;             // to protect shared data structure
+
+  Page *GetFreePage();
 };
 } // namespace cmudb

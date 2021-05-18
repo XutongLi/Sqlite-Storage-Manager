@@ -13,8 +13,7 @@ namespace cmudb {
 INDEX_TEMPLATE_ARGUMENTS
 class IndexIterator {
 public:
-  // you may define your own constructor based on your member variables
-  IndexIterator();
+  IndexIterator(int index, B_PLUS_TREE_LEAF_PAGE_TYPE *leaf, BufferPoolManager *buffer_pool_manager);
   ~IndexIterator();
 
   bool isEnd();
@@ -24,7 +23,14 @@ public:
   IndexIterator &operator++();
 
 private:
-  // add your own private member variables here
+  void UnlockAndUnPin() {
+    buffer_pool_manager_->FetchPage(leaf_->GetPageId())->RUnlatch();
+    buffer_pool_manager_->UnpinPage(leaf_->GetPageId(), false);
+    buffer_pool_manager_->UnpinPage(leaf_->GetPageId(), false); // fetch two times
+  }
+  int index_;
+  B_PLUS_TREE_LEAF_PAGE_TYPE *leaf_;
+  BufferPoolManager *buffer_pool_manager_;
 };
 
 } // namespace cmudb

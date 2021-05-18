@@ -56,7 +56,7 @@ public:
                  BufferPoolManager * /* Unused */);
   void MoveFirstToEndOf(BPlusTreeLeafPage *recipient,
                         BufferPoolManager *buffer_pool_manager);
-  void MoveLastToFrontOf(BPlusTreeLeafPage *recipient, int parentIndex,
+  void MoveLastToFrontOf(BPlusTreeLeafPage *recipient, int parent_index,
                          BufferPoolManager *buffer_pool_manager);
   // Debug
   std::string ToString(bool verbose = false) const;
@@ -65,7 +65,7 @@ private:
   void CopyHalfFrom(MappingType *items, int size);
   void CopyAllFrom(MappingType *items, int size);
   void CopyLastFrom(const MappingType &item);
-  void CopyFirstFrom(const MappingType &item, int parentIndex,
+  void CopyFirstFrom(const MappingType &item, int parent_index,
                      BufferPoolManager *buffer_pool_manager);
   page_id_t next_page_id_;
   MappingType array[0];

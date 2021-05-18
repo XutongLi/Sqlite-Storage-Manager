@@ -33,6 +33,7 @@ namespace cmudb {
 
 // define page type enum
 enum class IndexPageType { INVALID_INDEX_PAGE = 0, LEAF_PAGE, INTERNAL_PAGE };
+enum class OpType { READ = 0, INSERT, DELETE };
 
 // Abstract class.
 class BPlusTreePage {
@@ -57,14 +58,16 @@ public:
 
   void SetLSN(lsn_t lsn = INVALID_LSN);
 
+  bool IsSafe(OpType op);
+
 private:
   // member variable, attributes that both internal and leaf page share
-  IndexPageType page_type_;
-  lsn_t lsn_;
-  int size_;
-  int max_size_;
-  page_id_t parent_page_id_;
-  page_id_t page_id_;
+  IndexPageType page_type_;   // Page Type: internal or leaf
+  lsn_t lsn_;                 // log sequence number
+  int size_;                  // Number of Key & Value pairs in page
+  int max_size_;              // Max number of Key & Value pairs in page
+  page_id_t parent_page_id_;  // Parent page id
+  page_id_t page_id_;         // Self page id
 };
 
 } // namespace cmudb

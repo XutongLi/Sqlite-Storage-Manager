@@ -18,9 +18,13 @@
 #include "page/b_plus_tree_internal_page.h"
 #include "page/b_plus_tree_leaf_page.h"
 
+// #define DBG
+
 namespace cmudb {
 
 #define BPLUSTREE_TYPE BPlusTree<KeyType, ValueType, KeyComparator>
+enum class LockType { EXCLUSIVE = 0, SHARED };
+
 // Main class providing the API for the Interactive B+ Tree.
 INDEX_TEMPLATE_ARGUMENTS
 class BPlusTree {
@@ -59,8 +63,11 @@ public:
   void RemoveFromFile(const std::string &file_name,
                       Transaction *transaction = nullptr);
   // expose for test purpose
-  B_PLUS_TREE_LEAF_PAGE_TYPE *FindLeafPage(const KeyType &key,
-                                           bool leftMost = false);
+  B_PLUS_TREE_LEAF_PAGE_TYPE *FindLeafPage(const KeyType &key, bool leftMost = false, 
+                                            OpType op = OpType::READ, Transaction *transaction = nullptr);
+
+  bool Check(bool force = false);
+  bool openCheck = true;
 
 private:
   void StartNewTree(const KeyType &key, const ValueType &value);
@@ -72,10 +79,13 @@ private:
                         BPlusTreePage *new_node,
                         Transaction *transaction = nullptr);
 
-  template <typename N> N *Split(N *node);
+  template <typename N> N *Split(N *node, Transaction *transaction = nullptr);
 
   template <typename N>
   bool CoalesceOrRedistribute(N *node, Transaction *transaction = nullptr);
+
+  template <typename N>
+  bool FindSibling(N *node, N * &sibling, Transaction *transaction = nullptr);
 
   template <typename N>
   bool Coalesce(
@@ -89,11 +99,55 @@ private:
 
   void UpdateRootPageId(int insert_record = false);
 
+  void RemovePagesInTransaction(LockType lock_type, Transaction *transaction, page_id_t cur_id = INVALID_PAGE_ID);
+
+  BPlusTreePage *ConcurrentFetchPage(page_id_t page_id, OpType op, page_id_t previous_id, Transaction *transaction);
+
+  inline void LockPage(LockType lock_type, Page *page) {
+    if (lock_type == LockType::EXCLUSIVE)
+      page->WLatch();
+    else if (lock_type == LockType::SHARED)
+      page->RLatch();
+  }
+
+  inline void UnlockPage(LockType lock_type, Page *page) {
+    if (lock_type == LockType::EXCLUSIVE)
+      page->WUnlatch();
+    else if (lock_type == LockType::SHARED)
+      page->RUnlatch();
+  }
+
+  inline void LockRootPage(LockType lock_type) {
+    if (lock_type == LockType::EXCLUSIVE)
+      rw_mutex_.WLock();
+    else if (lock_type == LockType::SHARED)
+      rw_mutex_.RLock();
+    ++ root_locked_cnt;
+  }
+
+  inline void UnlockRootPage(LockType lock_type) {
+    if (root_locked_cnt == 0)
+      return;
+    if (lock_type == LockType::EXCLUSIVE)
+      rw_mutex_.WUnlock();
+    else if (lock_type == LockType::SHARED)
+      rw_mutex_.RUnlock();
+    -- root_locked_cnt;
+  }
+
+  inline void UnlockPage(LockType lock_type, page_id_t page_id) {
+    auto page = buffer_pool_manager_->FetchPage(page_id);
+    UnlockPage(lock_type, page);
+    buffer_pool_manager_->UnpinPage(page_id, lock_type == LockType::EXCLUSIVE);
+  }
+
   // member variable
   std::string index_name_;
   page_id_t root_page_id_;
   BufferPoolManager *buffer_pool_manager_;
   KeyComparator comparator_;
+  RWMutex rw_mutex_;  // protect root_page_id_
+  static thread_local int root_locked_cnt;
 };
 
 } // namespace cmudb

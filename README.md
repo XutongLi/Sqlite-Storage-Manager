@@ -8,6 +8,7 @@ This project is a new disck-oriented storage manager for the [SQLite](<https://w
 
 - **Extendable Hash Table** : The hash table uses unordered buckets to store unique key/value pairs. It supports the ability to insert/delete key/value entries without specifying the max size of the table. It can automatically grow in size as needed. Use Google CityHash as hash function.
 - **Buffer Pool Manager** : The buffer pool manager interface allows a client to new/delete pages on disk, to read a disk page into the buffer pool and pin it, also to unpin a page in the buffer pool. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system. The manager uses LRU page replacement policy.
+- **B+Tree Index** : B+Tree is a balanced tree in which the internal pages direct the search and leaf pages contains actual data entries. And it can support concurrent operations.
 
 ## Use Google CityHash
 
@@ -87,9 +88,3 @@ See [Run-Time Loadable Extensions](https://sqlite.org/loadext.html) and [CREATE 
 
 ### Virtual table API
 https://sqlite.org/vtab.html
-
-### TODO
-* update: when size exceed that page, table heap returns false and delete/insert tuple (rid will change and need to delete/insert from index)
-* delete empty page from table heap when delete tuple
-* implement delete table, with empty page bitmap in disk manager (how to persistent?)
-* index: unique/dup key, variable key

@@ -9,6 +9,7 @@ This project is a new disck-oriented storage manager for the [SQLite](<https://w
 - **Extendable Hash Table** : The hash table uses unordered buckets to store unique key/value pairs. It supports the ability to insert/delete key/value entries without specifying the max size of the table. It can automatically grow in size as needed. Use Google CityHash as hash function.
 - **Buffer Pool Manager** : The buffer pool manager interface allows a client to new/delete pages on disk, to read a disk page into the buffer pool and pin it, also to unpin a page in the buffer pool. It allows a DBMS to support databases that are larger than the amount of memory that is available to the system. The manager uses LRU page replacement policy.
 - **B+Tree Index** : B+Tree is a balanced tree in which the internal pages direct the search and leaf pages contains actual data entries. And it can support concurrent operations.
+- **Lock Manager** : To ensure correct interleaving of transactions' operations, the DBMS will use a lock manager (LM) to control when transactions are allowed to access data items. The basic idea of a LM is that it maintains an internal data structure about the locks currently held by active transactions. Transactions then issue lock requests to the LM before they are allowed to access a data item. The LM will either grant the lock to the calling transaction, block that transaction, or abort it.
 
 ## Use Google CityHash
 

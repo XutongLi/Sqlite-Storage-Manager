@@ -23,7 +23,7 @@
 namespace cmudb {
 
 #define BPLUSTREE_TYPE BPlusTree<KeyType, ValueType, KeyComparator>
-enum class LockType { EXCLUSIVE = 0, SHARED };
+enum class LockType { EXCLUSIVE = 0, SHARED, UPGRADING };
 
 // Main class providing the API for the Interactive B+ Tree.
 INDEX_TEMPLATE_ARGUMENTS
